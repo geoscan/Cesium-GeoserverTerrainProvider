@@ -70,7 +70,7 @@
      * static array where data array availables for OGCHelper are defined
      */
     OGCHelper.FormatArray = [{
-        format: "image/bil",
+        format: "application/bil32",
         /**
          * bufferIn : buffer to process (switch byte order and check the data limitations)
          * size: defines the dimension of the array (size.height* size.width cells)
@@ -81,24 +81,20 @@
         postProcessArray: function(bufferIn, size, highest, lowest, offset) {
             var resultat;
             var viewerIn = new DataView(bufferIn);
-            var littleEndianBuffer = new ArrayBuffer(size.height * size.width * 2);
+            var littleEndianBuffer = new ArrayBuffer(size.height * size.width * 4);
             var viewerOut = new DataView(littleEndianBuffer);
             if (littleEndianBuffer.byteLength === bufferIn.byteLength) {
                 // time to switch bytes!!
-                var temp, goodCell = 0,
-                    somme = 0;
-                for (var i = 0; i < littleEndianBuffer.byteLength; i += 2) {
-                    temp = viewerIn.getInt16(i, false) - offset;
-                    if (temp > lowest && temp < highest) {
-                        viewerOut.setInt16(i, temp, true);
-                        somme += temp;
-                        goodCell++;
-                    } else {
-                        var val = (goodCell === 0 ? 1 : somme / goodCell);
-                        viewerOut.setInt16(i, val, true);
+                for (var i = 0; i < littleEndianBuffer.byteLength; i += 4) {
+                    temp = viewerIn.getFloat32(i, false) - offset;
+                    if (isNaN(temp) || temp < lowest) {
+                       temp = lowest; 
+                    } else if (temp > highest) {
+                        temp = highest;
                     }
+                    viewerOut.setFloat32(i, temp, true);
                 }
-                resultat = new Int16Array(littleEndianBuffer);
+                resultat = new Float32Array(littleEndianBuffer);
             }
             return resultat;
         }
