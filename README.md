@@ -1,5 +1,14 @@
+Usage experience
+================
+myStyle.sld hack seems to be not working as of https://github.com/kaktus40/Cesium-GeoserverTerrainProvider/issues/2
+It produces noizy terrain with big steps (around 255 height levels total) you may not even try it unless you somehow achive right interpolation like discussed this question https://gis.stackexchange.com/questions/92776/how-to-get-full-16-bits-range-using-rastersymbolizer-and-colormap-ramp
+
+BIL case was originally developed for one single dataset(SRTM) using 16bit integer bands. It was updated in this repository to request 32bit floating point values from geoserver. It should work in more cases.
+
 cesium-GeoserverTerrainProvider
 ================
+
+Original plugin seems to be developed for one specific dataset. 
 
 GeoserverTerrainProvider: A terrain provider which works with geoserver providing elevation datas in bil, png, gif and jpeg formats. The png format should be prefered. 
 
